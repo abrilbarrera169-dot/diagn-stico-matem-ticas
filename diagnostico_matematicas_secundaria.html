@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnóstico de Matemáticas · 3.º de secundaria</title>
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f4f6fb}*{box-sizing:border-box}body{margin:0;padding:18px 12px 40px}.wrap{max-width:760px;margin:auto}.hero,.card,.result{background:#fff;border:1px solid #e3e7ef;border-radius:18px;padding:20px;margin:0 0 14px;box-shadow:0 3px 14px #18233a0a}.hero{background:#172b4d;color:#fff}.hero h1{font-size:1.55rem;margin:0 0 8px}.muted{color:#65718a}.hero .muted{color:#d5deed}.pill{display:inline-block;background:#e8efff;color:#244c9a;border-radius:30px;padding:5px 10px;font-size:.82rem;margin:8px 5px 0 0}.hero .pill{background:#ffffff20;color:#fff}.field{width:100%;padding:13px;border:1px solid #cbd3e1;border-radius:10px;font:inherit;margin-top:7px}.top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.timer{font-weight:700;font-variant-numeric:tabular-nums}.bar{height:8px;background:#e8ebf2;border-radius:10px;overflow:hidden;margin-top:10px}.bar>div{height:100%;width:0;background:#3274d9;transition:width .2s}.section{font-size:1.05rem;margin:4px 0 12px}.q{padding:16px 0;border-top:1px solid #edf0f5}.q:first-of-type{border-top:0}.q h3{font-size:1rem;line-height:1.45;margin:0 0 12px}.opt{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid #e0e5ee;border-radius:10px;margin:7px 0;line-height:1.35}.opt input{margin-top:3px;accent-color:#245ec7}.btn{border:0;border-radius:11px;background:#245ec7;color:#fff;padding:13px 17px;font:600 1rem inherit;width:100%;cursor:pointer}.btn.secondary{background:#e9eef8;color:#1d3764}.btn:disabled{opacity:.5}.result{display:none}.score{font-size:2.2rem;font-weight:800;margin:4px 0}.small{font-size:.9rem}.warn{background:#fff8e7;border:1px solid #f1d99c;border-radius:12px;padding:12px;color:#614a13}.correct{color:#167447}.wrong{color:#a12e35}.answerline{padding:8px 0;border-top:1px solid #edf0f5}.actions{display:grid;gap:9px;margin-top:14px}@media(min-width:600px){body{padding-top:28px}.hero,.card,.result{padding:24px}}
+</style></head>
+<body><main class="wrap">
+<section class="hero"><h1>Evaluación diagnóstica de Matemáticas</h1><div>3.º de secundaria</div><span class="pill">30 reactivos</span><span class="pill">30 minutos</span><p class="muted">Lee cada pregunta y resuélvela en una hoja aparte. Después selecciona la respuesta. No uses calculadora. Si una pregunta se te dificulta, continúa y vuelve al final.</p></section>
+<section class="card"><label for="student"><strong>Nombre de la alumna</strong></label><input id="student" class="field" placeholder="Escribe tu nombre" autocomplete="name"><div class="top" style="margin-top:16px"><strong>Tiempo restante</strong><span class="timer" id="timer">30:00</span><span class="muted small" id="progressText">0 de 30 respondidas</span></div><div class="bar"><div id="progress"></div></div></section>
+<div id="questions"></div>
+<section class="card"><div class="warn">Antes de terminar, revisa que hayas contestado todas las preguntas. Al enviar, verás tu resultado y podrás copiarlo para mandárselo a tu maestra.</div><button class="btn" id="submit" style="margin-top:14px">Finalizar y ver resultado</button></section>
+<section class="result" id="result" aria-live="polite"><h2>Resultado del diagnóstico</h2><div id="studentResult"></div><div class="score" id="score"></div><div id="feedback"></div><p class="small muted">Este resultado es orientativo. Tu maestra revisará también los procedimientos que escribiste en tu hoja.</p><div id="details"></div><div class="actions"><button class="btn" id="copy">Copiar resultados para enviar</button><button class="btn secondary" id="share">Compartir resultado</button></div></section>
+<footer class="muted small" style="text-align:center;padding:12px">Evaluación de práctica · Tus respuestas no se guardan automáticamente en una base de datos.</footer>
+</main>
+<script>
+const sections=[
+{title:'Sección 1. Operaciones básicas',items:[
+['625 + 378 - 249 =',['754','764','744','752'],0],
+['36 × 14 =',['484','504','514','494'],1],
+['864 ÷ 12 =',['62','72','82','74'],1],
+['48 - 6 × 5 =',['210','18','42','30'],1],
+['-8 + 15 - 6 =',['3','1','-1','13'],1]]},
+{title:'Sección 2. Fracciones, decimales y porcentajes',items:[
+['2/3 + 1/6 =',['3/9','5/6','1/2','2/6'],1],
+['5/8 - 1/4 =',['4/4','3/8','1/8','1/2'],1],
+['3/5 × 10/9 =',['2/3','3/2','1/3','2/5'],0],
+['4/7 ÷ 2/3 =',['8/21','6/7','2/7','3/14'],1],
+['Convierte 0.75 a porcentaje.',['7.5%','75%','750%','0.75%'],1]]},
+{title:'Sección 3. Proporcionalidad',items:[
+['¿Cuánto es el 15% de 800?',['100','120','150','180'],1],
+['Una chamarra cuesta $600 y tiene 25% de descuento. ¿Cuánto pagarás?',['$400','$450','$475','$500'],1],
+['Si 5 cuadernos cuestan $150, ¿cuánto cuestan 8?',['$210','$240','$250','$300'],1],
+['Una receta utiliza 3 tazas de harina para 4 porciones. ¿Cuántas necesitas para 10 porciones?',['6','7.5','8','9'],1]]},
+{title:'Sección 4. Álgebra y ecuaciones',items:[
+['Simplifica: 4x + 3x - 5',['7x - 5','7x + 5','12x - 5','7x'],0],
+['Aplica la propiedad distributiva: 2(a + 4)',['2a + 4','2a + 8','a + 8','2a + 12'],1],
+['Resuelve: x + 9 = 21',['x = 10','x = 12','x = 30','x = 11'],1],
+['Resuelve: 4x - 7 = 17',['x = 5','x = 6','x = 7','x = 8'],1],
+['Resuelve: 3(x - 2) = 15',['x = 5','x = 7','x = 9','x = 3'],1],
+['Desarrolla: (x + 4)(x + 2)',['x² + 8x + 8','x² + 6x + 8','x² + 6x + 6','x² + 8x + 6'],1]]},
+{title:'Sección 5. Potencias y raíces',items:[
+['Calcula: 2 elevado a la cuarta potencia.',['8','12','16','24'],2],
+['Calcula la raíz cuadrada de 144.',['10','12','14','16'],1],
+['Resuelve: 3² + 4²',['25','49','24','14'],0]]},
+{title:'Sección 6. Geometría',items:[
+['Un rectángulo mide 9 cm de largo y 4 cm de ancho. ¿Cuál es su área?',['26 cm²','36 cm²','40 cm²','13 cm²'],1],
+['Un cuadrado tiene lados de 7 cm. ¿Cuál es su perímetro?',['14 cm','28 cm','49 cm','21 cm'],1],
+['Un triángulo tiene base de 10 cm y altura de 6 cm. ¿Cuál es su área?',['60 cm²','30 cm²','16 cm²','40 cm²'],1],
+['Un triángulo rectángulo tiene catetos de 5 cm y 12 cm. ¿Cuánto mide su hipotenusa?',['10 cm','13 cm','17 cm','12 cm'],1]]},
+{title:'Sección 7. Estadística y probabilidad',items:[
+['Calcula la media de: 6, 8, 10, 12.',['8','9','10','11'],1],
+['Encuentra la mediana: 3, 9, 5, 7, 6.',['5','6','7','9'],1],
+['Al lanzar un dado de seis caras, ¿cuál es la probabilidad de obtener un número par?',['1/3','1/2','2/3','1/6'],1]]}
+];
+let answers={},submitted=false,seconds=1800,interval;
+const root=document.getElementById('questions');let n=0;
+sections.forEach(s=>{const card=document.createElement('section');card.className='card';const h=document.createElement('h2');h.className='section';h.textContent=s.title;card.appendChild(h);s.items.forEach(item=>{n++;const idx=n-1,q=document.createElement('div');q.className='q';const title=document.createElement('h3');title.textContent=n+'. '+item[0];q.appendChild(title);item[1].forEach((op,j)=>{const lab=document.createElement('label');lab.className='opt';const inp=document.createElement('input');inp.type='radio';inp.name='q'+idx;inp.value=j;inp.addEventListener('change',()=>{answers[idx]=j;updateProgress()});const span=document.createElement('span');span.textContent=String.fromCharCode(65+j)+'. '+op;lab.append(inp,span);q.appendChild(lab)});card.appendChild(q)});root.appendChild(card)});
+function updateProgress(){const count=Object.keys(answers).length;document.getElementById('progressText').textContent=count+' de 30 respondidas';document.getElementById('progress').style.width=(count/30*100)+'%'}
+function finish(){if(submitted)return;const name=document.getElementById('student').value.trim();if(!name){alert('Escribe tu nombre antes de finalizar.');document.getElementById('student').focus();return}const missing=30-Object.keys(answers).length;if(missing&&!confirm('Te faltan '+missing+' preguntas. ¿Quieres finalizar de todos modos?'))return;submitted=true;clearInterval(interval);let score=0,rows=[],k=0;sections.forEach(s=>s.items.forEach(item=>{const chosen=answers[k];const ok=chosen===item[2];if(ok)score++;rows.push({num:k+1,question:item[0],chosen:chosen===undefined?'Sin respuesta':item[1][chosen],correct:item[1][item[2]],ok});k++}));const pct=Math.round(score/30*100);document.getElementById('studentResult').textContent='Alumna: '+name;document.getElementById('score').textContent=score+' / 30 · '+pct+'%';document.getElementById('feedback').textContent=score>=26?'Dominio sólido':score>=21?'Buen desempeño':score>=15?'En proceso':score>=8?'Requiere reforzamiento':'Requiere recuperar aprendizajes fundamentales';const d=document.getElementById('details');d.innerHTML='';rows.forEach(r=>{const div=document.createElement('div');div.className='answerline small';const strong=document.createElement('strong');strong.className=r.ok?'correct':'wrong';strong.textContent='Pregunta '+r.num+': '+(r.ok?'Correcta':'Incorrecta');const p=document.createElement('div');p.textContent='Tu respuesta: '+r.chosen+' | Correcta: '+r.correct;div.append(strong,p);d.appendChild(div)});document.getElementById('result').style.display='block';document.getElementById('submit').disabled=true;window.finalText='Diagnóstico de Matemáticas - 3.º de secundaria\nAlumna: '+name+'\nResultado: '+score+'/30 ('+pct+'%)\nNivel: '+document.getElementById('feedback').textContent+'\n\n'+rows.map(r=>'Pregunta '+r.num+': '+(r.ok?'Correcta':'Incorrecta')+' | Respondió: '+r.chosen+' | Correcta: '+r.correct).join('\n');document.getElementById('result').scrollIntoView({behavior:'smooth'});}
+document.getElementById('submit').addEventListener('click',finish);
+document.getElementById('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(window.finalText);alert('Resultados copiados. Ahora puedes pegarlos en WhatsApp.')}catch(e){alert(window.finalText)}});
+document.getElementById('share').addEventListener('click',()=>{const url='https://wa.me/?text='+encodeURIComponent(window.finalText);window.open(url,'_blank')});
+function tick(){seconds--;const m=Math.floor(seconds/60),s=seconds%60;document.getElementById('timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');if(seconds<=0){clearInterval(interval);alert('Se terminó el tiempo. Presiona Finalizar para ver tus resultados.')}}
+interval=setInterval(tick,1000);
+</script></body></html>
